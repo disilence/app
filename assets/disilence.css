@@ -1,0 +1,73 @@
+/* ============================================================================
+ * DiSilence OS — brand polish layer (loads after keystone.css)
+ * "Composed from Silence": condensed display type, bone ink, one amber signal.
+ * Scoped to [data-tenant="disilence"] so it only ever styles our own tenant.
+ * ==========================================================================*/
+:root[data-tenant="disilence"] h1,
+:root[data-tenant="disilence"] h2,
+:root[data-tenant="disilence"] h3,
+:root[data-tenant="disilence"] .view-head h2,
+:root[data-tenant="disilence"] #loginTitle,
+:root[data-tenant="disilence"] .brand .name b {
+  font-family: "Archivo", var(--sans);
+  font-weight: 800;
+  letter-spacing: -.015em;
+}
+
+/* KPI values + spec lines lean on the mono "system voice" */
+:root[data-tenant="disilence"] .kpi .val { letter-spacing: -.01em; }
+
+/* The login + rail mark chip: let the SVG breathe on a near-black tile rather
+ * than the default brand-gradient fill (our mark carries its own amber signal). */
+:root[data-tenant="disilence"] #loginLogo,
+:root[data-tenant="disilence"] #railMark {
+  background: #0a0b0d !important;
+  border: 1px solid var(--line-2);
+  box-shadow: 0 0 0 1px rgba(242,160,61,.12), 0 8px 24px rgba(0,0,0,.5);
+  overflow: hidden;
+}
+:root[data-tenant="disilence"] #loginLogo img,
+:root[data-tenant="disilence"] #railMark img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Signal accent: a hairline amber underline motif on view heads */
+:root[data-tenant="disilence"] .view-head h2::after {
+  content: "";
+  display: block;
+  width: 34px; height: 2px;
+  margin-top: 8px;
+  background: var(--brand);
+  box-shadow: 0 0 12px rgba(242,160,61,.45);
+}
+
+/* env chip reads as a quiet "DEMO" mono tag, on-brand */
+:root[data-tenant="disilence"] #envTag {
+  font-family: var(--mono);
+  letter-spacing: .12em;
+}
+
+/* Signal-dot helper for inline "system speaking" accents in module bodies */
+:root[data-tenant="disilence"] .sig-dot {
+  display: inline-block; width: .5em; height: .5em; border-radius: 50%;
+  background: var(--brand); box-shadow: 0 0 10px rgba(242,160,61,.5);
+  vertical-align: middle; margin-right: .45em;
+}
+
+/* Autonomous-activity feed (home) — one row per decision, clean two-line layout */
+:root[data-tenant="disilence"] .actlist { display: flex; flex-direction: column; gap: 2px; }
+:root[data-tenant="disilence"] .act-row {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+  padding: 9px 0; border-bottom: 1px solid var(--line);
+}
+:root[data-tenant="disilence"] .act-row:last-child { border-bottom: 0; }
+:root[data-tenant="disilence"] .act-row > span { color: var(--txt); }
+:root[data-tenant="disilence"] .act-row small { color: var(--txt-3); white-space: nowrap; font-family: var(--mono); font-size: 11px; }
+
+/* Role list (admin) + key/value rows in drills + cards */
+:root[data-tenant="disilence"] .rolelist { display: flex; flex-direction: column; }
+:root[data-tenant="disilence"] .kv {
+  display: flex; justify-content: space-between; gap: 1rem; align-items: baseline;
+  padding: 7px 0; border-bottom: 1px solid var(--line);
+}
+:root[data-tenant="disilence"] .kv:last-child { border-bottom: 0; }
+:root[data-tenant="disilence"] .kv > b { color: var(--txt-2); font-weight: 500; flex: none; }
+:root[data-tenant="disilence"] .kv > span { color: var(--txt); text-align: right; }

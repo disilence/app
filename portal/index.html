@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Support Portal — DiSilence</title>
+<meta name="robots" content="noindex,nofollow" />
+<link rel="icon" href="../brand/disilence-mark.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --red:#B2292E;--red-deep:#9A2227;--navy:#243746;--navy-deep:#1B2B37;
+    --slate:#A5BAC9;--slate-deep:#6E8394;--gray:#D9D8D6;--bone:#F8F7F5;--bone-2:#F1EFEB;
+    --line:rgba(36,55,70,.13);--muted:#5D6F7C;--green:#2E7D5B;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Jost',-apple-system,system-ui,sans-serif;background:var(--bone);color:var(--navy);
+    font-weight:300;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:880px;margin:0 auto;padding:0 clamp(1.1rem,4vw,2rem)}
+  h1,h2,h3{font-weight:600;line-height:1.15;letter-spacing:-.01em}
+
+  .bar{background:var(--navy-deep);color:#fff}
+  .bar .stripe{height:4px;background:var(--red)}
+  .bar .inner{display:flex;justify-content:space-between;align-items:center;padding:.9rem 0}
+  .wordmark{font-weight:600;letter-spacing:.32em;font-size:.8rem;color:#fff;text-transform:uppercase}
+  .bar .who{font-size:.8rem;color:var(--slate);letter-spacing:.04em}
+
+  .head{background:var(--navy-deep);color:#fff;padding:1.6rem 0 2.2rem}
+  .head .kicker{font-size:.72rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--slate)}
+  .head h1{font-size:clamp(1.7rem,5vw,2.5rem);color:#fff;margin-top:.5rem}
+  .head .plan{margin-top:.5rem;color:var(--slate);font-size:.95rem}
+  .yourmove{margin-top:1.2rem;display:flex;gap:.8rem;align-items:flex-start;background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:.9rem 1.1rem}
+  .yourmove .dot{width:10px;height:10px;border-radius:50%;background:var(--red);flex:none;margin-top:.45rem;
+    box-shadow:0 0 0 4px rgba(178,41,46,.25)}
+  .yourmove b{font-weight:500;color:#fff;display:block;font-size:.95rem}
+  .yourmove p{color:var(--slate);font-size:.88rem;margin-top:.15rem}
+
+  .grid{display:grid;gap:1.2rem;padding:1.6rem 0 3rem}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:clamp(1.2rem,3.5vw,1.7rem)}
+  .card h2{font-size:1.15rem;display:flex;align-items:center;gap:.6rem}
+  .card h2 .ix{font-size:.72rem;font-weight:600;letter-spacing:.18em;color:var(--red);text-transform:uppercase}
+  .card .sub{color:var(--muted);font-size:.9rem;margin-top:.25rem}
+
+  .tl{margin-top:1.2rem}
+  .step{display:grid;grid-template-columns:26px 1fr;gap:.9rem;position:relative;padding-bottom:1.05rem}
+  .step:last-child{padding-bottom:0}
+  .step::before{content:"";position:absolute;left:12px;top:24px;bottom:0;width:2px;background:var(--bone-2)}
+  .step:last-child::before{display:none}
+  .n{width:26px;height:26px;border-radius:50%;border:2px solid var(--gray);background:#fff;flex:none;
+    display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;color:var(--slate-deep);z-index:1}
+  .step.done .n{background:var(--green);border-color:var(--green);color:#fff}
+  .step.done .n::before{content:"✓"}
+  .step.current .n{border-color:var(--red);color:var(--red);box-shadow:0 0 0 5px rgba(178,41,46,.12);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(178,41,46,.10)}50%{box-shadow:0 0 0 8px rgba(178,41,46,.16)}}
+  .step.ready .n{border-color:var(--navy);color:var(--navy)}
+  .s-head{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+  .s-head b{font-weight:500;font-size:.98rem}
+  .step.done .s-head b{color:var(--slate-deep);font-weight:400}
+  .step.current .s-head b{font-weight:600}
+  .badge{font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border-radius:99px;padding:.12rem .55rem}
+  .badge.you{background:#fdf1f1;color:var(--red-deep);border:1px solid rgba(178,41,46,.25)}
+  .badge.us{background:var(--bone-2);color:var(--slate-deep);border:1px solid var(--line)}
+  .badge.together{background:#eef4f8;color:#33607e;border:1px solid rgba(51,96,126,.22)}
+  .badge.now{background:var(--red);color:#fff;border:0}
+  .badge.rdy{background:#eef6f1;color:var(--green);border:1px solid rgba(46,125,91,.25)}
+  .s-note{color:var(--muted);font-size:.85rem;margin-top:.1rem}
+  .s-date{color:var(--slate-deep);font-size:.75rem;letter-spacing:.05em}
+
+  .docs{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1.1rem}
+  @media(max-width:560px){.docs{grid-template-columns:1fr}}
+  .doc{display:flex;gap:.8rem;align-items:center;border:1px solid var(--line);border-radius:12px;
+    padding:.8rem .95rem;background:var(--bone);transition:border-color .2s,transform .2s var(--ease);color:inherit;text-decoration:none}
+  .doc:hover{border-color:var(--red);transform:translateY(-1px)}
+  .doc .ic{width:36px;height:36px;border-radius:9px;background:var(--navy);color:#fff;flex:none;
+    display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:600;letter-spacing:.06em}
+  .doc b{font-weight:500;font-size:.92rem;display:block;line-height:1.3}
+  .doc small{color:var(--muted);font-size:.76rem}
+
+  .f-row{margin-top:1.1rem}
+  label{font-size:.8rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--slate-deep);display:block;margin-bottom:.4rem}
+  textarea{width:100%;min-height:110px;border:1.5px solid var(--line);border-radius:12px;padding:.85rem 1rem;
+    font-family:inherit;font-size:.95rem;color:var(--navy);background:#fff;resize:vertical;outline:none;transition:border-color .2s}
+  textarea:focus{border-color:var(--navy)}
+  .drop{margin-top:.4rem;border:1.5px dashed var(--slate);border-radius:12px;padding:1.1rem;text-align:center;
+    color:var(--muted);font-size:.9rem;cursor:pointer;transition:border-color .2s,background .2s;background:var(--bone)}
+  .drop:hover,.drop.over{border-color:var(--red);background:#fdf7f7}
+  .drop input{display:none}
+  .filelist{margin-top:.6rem;display:flex;flex-direction:column;gap:.4rem}
+  .fitem{display:flex;justify-content:space-between;align-items:center;gap:.8rem;font-size:.85rem;
+    background:var(--bone);border:1px solid var(--line);border-radius:9px;padding:.5rem .8rem}
+  .fitem .st{font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--slate-deep);white-space:nowrap}
+  .fitem.ok .st{color:var(--green)}
+  .fitem.err .st{color:var(--red-deep)}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--red);color:#fff;font-family:inherit;
+    font-size:.95rem;font-weight:500;padding:.75rem 1.7rem;border-radius:999px;border:0;cursor:pointer;
+    transition:background .2s,transform .2s var(--ease);margin-top:1.1rem}
+  .btn:hover{background:var(--red-deep);transform:translateY(-1px)}
+  .btn:disabled{background:var(--gray);color:var(--slate-deep);cursor:default;transform:none}
+  .sent{display:none;margin-top:1rem;background:#eef6f1;border:1px solid rgba(46,125,91,.3);color:var(--green);
+    border-radius:12px;padding:.85rem 1.1rem;font-size:.92rem}
+  .alt{margin-top:.9rem;font-size:.8rem;color:var(--muted)}
+  .alt a{color:var(--red-deep)}
+
+  .feed{margin-top:1rem}
+  .fev{display:grid;grid-template-columns:3.4rem 1fr;gap:.8rem;padding:.5rem 0;border-bottom:1px solid var(--bone-2);font-size:.9rem}
+  .fev:last-child{border-bottom:0}
+  .fev .d{color:var(--slate-deep);font-size:.75rem;letter-spacing:.05em;padding-top:.15rem;white-space:nowrap}
+
+  .foot{padding:0 0 2.6rem;text-align:center;color:var(--slate-deep);font-size:.8rem}
+  .foot a{color:var(--red-deep);text-decoration:none}
+
+  #gate{display:none;min-height:70vh;align-items:center;justify-content:center;text-align:center;padding:2rem}
+  #gate .in{max-width:420px}
+  #gate h1{font-size:1.5rem}
+  #gate p{color:var(--muted);margin-top:.6rem;font-size:.95rem}
+
+  .rv{opacity:0;transform:translateY(10px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+  .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.step.current .n{animation:none}}
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="stripe"></div><div class="wrap inner">
+  <span class="wordmark">Disilence</span>
+  <span class="who" id="barWho"></span>
+</div></div>
+
+<div id="gate"><div class="in">
+  <h1>This page needs its access key.</h1>
+  <p>Open the portal using the exact link we sent you — it carries your private key. If the link isn't working, just email <a href="mailto:mike@disilence.com" style="color:var(--red-deep)">mike@disilence.com</a> and we'll resend it.</p>
+</div></div>
+
+<div id="app" style="display:none">
+  <header class="head"><div class="wrap">
+    <div class="kicker rv" id="hKicker">Support portal</div>
+    <h1 class="rv" id="hTitle"></h1>
+    <div class="plan rv" id="hPlan"></div>
+    <div class="yourmove rv" id="moveCard"><span class="dot"></span><div>
+      <b id="moveHead"></b><p id="moveNote"></p>
+    </div></div>
+  </div></header>
+
+  <main class="wrap grid">
+    <section class="card rv" id="c-status">
+      <h2><span class="ix">01</span>Where things stand</h2>
+      <p class="sub">Every stage of your project, live. Green is done, red is in motion.</p>
+      <div class="tl" id="tl"></div>
+    </section>
+
+    <section class="card rv" id="c-docs">
+      <h2><span class="ix">02</span>Documents &amp; links</h2>
+      <p class="sub">Everything we've shared with you, in one place — no inbox digging.</p>
+      <div class="docs" id="docs"></div>
+    </section>
+
+    <section class="card rv" id="c-submit">
+      <h2><span class="ix">03</span><span id="submitTitle">Send us something</span></h2>
+      <p class="sub" id="submitSub">Photos, answers, feedback, questions — drop them here and they land with us instantly, organized.</p>
+      <div class="f-row">
+        <label for="msg">Message (optional)</label>
+        <textarea id="msg" placeholder="Feedback, questions, answers — anything."></textarea>
+      </div>
+      <div class="f-row">
+        <label>Files (optional)</label>
+        <div class="drop" id="drop">Click to choose files, or drag them here<input type="file" id="fin" multiple /></div>
+        <div class="filelist" id="flist"></div>
+      </div>
+      <button class="btn" id="send">Send to DiSilence →</button>
+      <div class="sent" id="sent">✓ Received — we've been notified and will follow up if anything needs clarifying.</div>
+      <p class="alt">Prefer another way? Email <a href="mailto:mike@disilence.com">mike@disilence.com</a> or drop files in the <a id="altDrive" href="#" target="_blank" rel="noopener">shared folder</a>. Very large videos are best via the folder.</p>
+    </section>
+
+    <section class="card rv" id="c-feed">
+      <h2><span class="ix">04</span>Recent activity</h2>
+      <div class="feed" id="feed"></div>
+    </section>
+  </main>
+
+  <footer class="foot wrap">
+    <span id="fClient"></span> · portal by <b style="font-weight:500">DiSilence</b> · questions any time — <a href="mailto:mike@disilence.com">mike@disilence.com</a>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var API = "https://hook.us2.make.com/ddrdfnemj66pya6915ykyc4a3ddrfshs";
+  var MAXB = 18 * 1024 * 1024;
+  var token = (location.hash || "").replace(/^#/, "") || localStorage.getItem("ds_portal_token") || "";
+  var gate = document.getElementById("gate"), app = document.getElementById("app");
+
+  function showGate(){ gate.style.display = "flex"; app.style.display = "none"; }
+  if (!token) { showGate(); return; }
+
+  fetch(API + "?action=state&token=" + encodeURIComponent(token))
+    .then(function(r){ return r.text(); })
+    .then(function(t){
+      var st; try { st = JSON.parse(t); } catch(e){ showGate(); return; }
+      localStorage.setItem("ds_portal_token", token);
+      render(st);
+    })
+    .catch(showGate);
+
+  function el(tag, cls, html){ var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+
+  function render(st){
+    var partner = (st.variant === "partner");
+    app.style.display = "block";
+    document.title = st.client + " — " + (partner ? "Partner" : "Project") + " Portal — DiSilence";
+    document.getElementById("barWho").textContent = st.contact ? "Prepared for " + st.contact : "";
+    document.getElementById("hKicker").textContent = partner ? "Partner portal" : "Project portal";
+    document.getElementById("hTitle").textContent = st.project || st.client;
+
+    /* Billing/plan chip is customer-only; partners never see commercial terms. */
+    var planEl = document.getElementById("hPlan");
+    if (partner) { planEl.textContent = (st.client || "") + (st.updated ? "  ·  updated " + st.updated : ""); }
+    else { planEl.textContent = (st.client || "") + (st.plan ? "  ·  " + st.plan : "") + (st.updated ? "  ·  updated " + st.updated : ""); }
+
+    var mh = document.getElementById("moveHead"), mn = document.getElementById("moveNote");
+    mh.textContent = st.whose === "you" ? "Next move: yours" : st.whose === "together" ? "Next move: together" : "Next move: ours — nothing needed from you";
+    mn.textContent = st.whoseNote || "";
+
+    /* Partner variant relabels the submit card toward assets/notes, not "answers". */
+    if (partner) {
+      document.getElementById("submitTitle").textContent = st.submitLabel || "Share assets or a note";
+      document.getElementById("submitSub").textContent = st.submitHint || "Files, decks, milestones, questions — send them here and they reach us directly.";
+    } else if (st.submitLabel) {
+      document.getElementById("submitTitle").textContent = st.submitLabel;
+      if (st.submitHint) document.getElementById("submitSub").textContent = st.submitHint;
+    }
+
+    var tl = document.getElementById("tl");
+    (st.stages || []).forEach(function(s, i){
+      var cls = s.s === "done" ? "done" : s.s === "current" ? "current" : s.s === "ready" ? "ready" : "";
+      var step = el("div", "step " + cls);
+      var n = el("span", "n", s.s === "done" ? "" : String(i + 1));
+      var body = el("div");
+      var head = el("div", "s-head");
+      head.appendChild(el("b", null, esc(s.n)));
+      if (s.s === "current") head.appendChild(el("span", "badge now", "In motion"));
+      if (s.s === "ready") head.appendChild(el("span", "badge rdy", "Ready early"));
+      if (s.who) head.appendChild(el("span", "badge " + (s.who === "you" ? "you" : s.who === "together" ? "together" : "us"),
+        s.who === "you" ? "You" : s.who === "together" ? "Together" : "DiSilence"));
+      if (s.d) head.appendChild(el("span", "s-date", esc(s.d)));
+      body.appendChild(head);
+      if (s.note) body.appendChild(el("div", "s-note", esc(s.note)));
+      step.appendChild(n); step.appendChild(body); tl.appendChild(step);
+    });
+
+    var docs = document.getElementById("docs");
+    (st.docs || []).forEach(function(d){
+      var a = el("a", "doc");
+      a.href = d.u; a.target = "_blank"; a.rel = "noopener";
+      var tag = /pdf/i.test(d.k || "") ? "PDF" : /drive|folder/i.test((d.k || "") + (d.t || "")) ? "DIR" : "WWW";
+      a.appendChild(el("span", "ic", tag));
+      a.appendChild(el("span", null, "<b>" + esc(d.t) + "</b><small>" + esc(d.k || "") + "</small>"));
+      docs.appendChild(a);
+      if (/folder/i.test(d.t || "")) document.getElementById("altDrive").href = d.u;
+    });
+
+    var feed = document.getElementById("feed");
+    (st.feed || []).forEach(function(f){
+      var row = el("div", "fev");
+      row.appendChild(el("span", "d", esc(f.d)));
+      row.appendChild(el("span", null, esc(f.m)));
+      feed.appendChild(row);
+    });
+    document.getElementById("fClient").textContent = st.client || "";
+
+    wireSubmit(st);
+    document.querySelectorAll(".rv").forEach(function(x, i){ setTimeout(function(){ x.classList.add("in"); }, 60 * i); });
+  }
+
+  function wireSubmit(st){
+    var drop = document.getElementById("drop"), fin = document.getElementById("fin"),
+        flist = document.getElementById("flist"), btn = document.getElementById("send"),
+        sent = document.getElementById("sent");
+    var queue = [];
+
+    drop.addEventListener("click", function(){ fin.click(); });
+    fin.addEventListener("change", function(){ add(fin.files); fin.value = ""; });
+    ["dragover","dragenter"].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add("over"); }); });
+    ["dragleave","drop"].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove("over"); }); });
+    drop.addEventListener("drop", function(e){ add(e.dataTransfer.files); });
+
+    function add(files){
+      Array.prototype.forEach.call(files, function(f){
+        var item = { f: f, el: el("div", "fitem") };
+        item.el.appendChild(el("span", null, esc(f.name) + " <small style='color:var(--slate-deep)'>" + (f.size / 1048576).toFixed(1) + " MB</small>"));
+        item.el.appendChild(el("span", "st", f.size > MAXB ? "Too large — use the folder" : "Ready"));
+        if (f.size > MAXB) item.el.classList.add("err"); else queue.push(item);
+        flist.appendChild(item.el);
+      });
+    }
+
+    function b64(file){ return new Promise(function(res, rej){
+      var r = new FileReader();
+      r.onload = function(){ res(String(r.result).split(",")[1]); };
+      r.onerror = rej; r.readAsDataURL(file);
+    }); }
+
+    function post(payload){ return fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); }
+
+    btn.addEventListener("click", function(){
+      var msg = document.getElementById("msg").value.trim();
+      if (!msg && !queue.length) return;
+      btn.disabled = true; btn.textContent = "Sending…";
+      var chain = Promise.resolve();
+      if (msg) chain = chain.then(function(){ return post({ action: "submit", token: token, client: st.client, kind: "message", message: msg }); });
+      queue.forEach(function(item){
+        chain = chain.then(function(){
+          item.el.querySelector(".st").textContent = "Uploading…";
+          return b64(item.f).then(function(data){
+            return post({ action: "submit", token: token, client: st.client, kind: "file", message: msg, fileName: item.f.name, fileData: data });
+          }).then(function(r){
+            item.el.classList.add(r.ok ? "ok" : "err");
+            item.el.querySelector(".st").textContent = r.ok ? "Delivered" : "Failed — try email";
+          });
+        });
+      });
+      chain.then(function(){
+        btn.textContent = "Send to DiSilence →"; btn.disabled = false;
+        sent.style.display = "block";
+        document.getElementById("msg").value = ""; queue = [];
+      }).catch(function(){
+        btn.textContent = "Send to DiSilence →"; btn.disabled = false;
+        alert("Something didn't go through — please try again or email mike@disilence.com");
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>

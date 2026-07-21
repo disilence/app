@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="DiSilence">
+  <defs>
+    <radialGradient id="glow" cx="72%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#15171c"/>
+      <stop offset="100%" stop-color="#0a0b0d"/>
+    </radialGradient>
+  </defs>
+  <rect x="0" y="0" width="120" height="120" rx="26" fill="url(#glow)"/>
+  <text x="34" y="82" font-family="'Archivo','Arial Narrow',sans-serif" font-size="72" font-weight="800"
+        letter-spacing="-2" fill="#e9e7e0">D</text>
+  <circle cx="88" cy="74" r="8.5" fill="#f2a03d"/>
+  <circle cx="88" cy="74" r="8.5" fill="none" stroke="#f2a03d" stroke-opacity="0.35" stroke-width="7"/>
+</svg>
