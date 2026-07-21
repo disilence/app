@@ -14,11 +14,16 @@
  * financials wire in later via the authenticated ?api= data seam — never
  * hardcoded here. env:"DEMO" everywhere.
  * ==========================================================================*/
-window.KEYSTONE_GOOGLE_CLIENT_ID = "";  // set a real OAuth client id to enable live Google Sign-In for @disilence.com
+/* Live Google Sign-In for the disilence.com Workspace. This client id is PUBLIC by
+ * design (it ships in the page); the client SECRET is never used or stored here —
+ * this is a browser-side GIS ID-token flow. With this set, the app runs in
+ * production auth mode: the offline seat-picker is never rendered and only
+ * Google-verified @disilence.com accounts get in (see assets/auth.js). */
+window.KEYSTONE_GOOGLE_CLIENT_ID = "484296853486-criongkm52q29pgl53jeft242rscc117.apps.googleusercontent.com";
 
 window.KEYSTONE_TENANT = {
   id: "disilence",
-  version: 4,
+  version: 5,
   name: "DiSilence",
   product: "DiSilence OS",
   tagline: "Composed in silence. Judged before it ships.",

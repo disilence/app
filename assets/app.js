@@ -91,13 +91,8 @@
   function hexA(hex, a) { var m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex); if (!m) return "rgba(109,124,255," + a + ")"; return "rgba(" + parseInt(m[1], 16) + "," + parseInt(m[2], 16) + "," + parseInt(m[3], 16) + "," + a + ")"; }
 
   function renderLogin() {
-    var box = $("#demoUsers"); box.innerHTML = "";
-    T.users.forEach(function (u) {
-      var el = node('<div class="demo-user"><span class="av" style="background:' + u.color + '">' + esc(u.initials) + '</span><span class="who"><b>' + esc(u.name) + "</b><small>" + esc(u.roleLabel) + "</small></span><span class=\"arr\">→</span></div>");
-      el.addEventListener("click", function () { KeystoneAuth.signInAs(u, "demo"); enterApp(); });
-      box.appendChild(el);
-    });
-    // Google button: real GIS if configured, else simulated primary sign-in
+    var box = $("#demoUsers");
+    var configured = KeystoneAuth.googleConfigured();
     var realOk = KeystoneAuth.initGoogle($("#gbtnReal"));
     KeystoneAuth._onSignedIn = enterApp;
     KeystoneAuth._onDenied = function (email) {
@@ -106,14 +101,40 @@
       $("#gnote").innerHTML = "<b>" + esc(email || "That account") + "</b> isn't authorized for " + esc(T.product || "this app") +
         ". Sign in with your <b>" + esc(need) + "</b> account.";
     };
-    if (realOk) { $("#gbtnSim").classList.add("hidden"); $("#gnote").textContent = ""; }
-    else {
-      $("#gbtnReal").classList.add("hidden");
-      $("#gnote").innerHTML = "Live Google Sign-In activates when an OAuth client id is set — free to configure. Running in <b>simulated</b> mode so the app works offline.";
-      $("#gbtnSim").addEventListener("click", function () {
-        var primary = T.users[0]; KeystoneAuth.signInAs(primary, "google-simulated"); enterApp();
-      });
+
+    if (configured) {
+      /* PRODUCTION — a real OAuth client id is set, so Google is the ONLY way in.
+       * The "continue as <seat>" picker below is a one-click full auth bypass; on
+       * a public URL it would defeat the sign-in gate entirely, so it is never
+       * rendered here (not merely hidden — the click handlers are never wired). */
+      box.innerHTML = "";
+      box.classList.add("hidden");
+      var orEl = document.querySelector(".login .or"); if (orEl) orEl.classList.add("hidden");
+      $("#gbtnSim").classList.add("hidden");
+      if (realOk) { $("#gnote").textContent = ""; }
+      else {
+        // Client id set but the GIS script didn't load — fail CLOSED, never fall
+        // back to the seat picker.
+        $("#gbtnReal").classList.add("hidden");
+        $("#gnote").innerHTML = "Google Sign-In couldn't load. Check your connection and reload — this app requires a <b>@disilence.com</b> Google account.";
+      }
+      return;
     }
+
+    /* OFFLINE / DEMO — no client id configured: render the seat picker so the app
+     * is explorable without Google, clearly labelled as simulated. */
+    box.classList.remove("hidden");
+    box.innerHTML = "";
+    T.users.forEach(function (u) {
+      var el = node('<div class="demo-user"><span class="av" style="background:' + u.color + '">' + esc(u.initials) + '</span><span class="who"><b>' + esc(u.name) + "</b><small>" + esc(u.roleLabel) + "</small></span><span class=\"arr\">→</span></div>");
+      el.addEventListener("click", function () { KeystoneAuth.signInAs(u, "demo"); enterApp(); });
+      box.appendChild(el);
+    });
+    $("#gbtnReal").classList.add("hidden");
+    $("#gnote").innerHTML = "Live Google Sign-In activates when an OAuth client id is set — free to configure. Running in <b>simulated</b> mode so the app works offline.";
+    $("#gbtnSim").addEventListener("click", function () {
+      var primary = T.users[0]; KeystoneAuth.signInAs(primary, "google-simulated"); enterApp();
+    });
   }
 
   /* ---- SHELL ------------------------------------------------------------ */
@@ -309,7 +330,16 @@
       try { await Store.loadSnapshot(); $("#envTag").textContent = "LIVE API"; }
       catch (e) { if (window.console) console.warn("[keystone] snapshot load failed", e); }
     }
-    if (KeystoneAuth.current()) enterApp(); else { renderLogin(); }
+    /* Once a real OAuth client id is configured, only a genuine Google session
+     * counts. Any session left over from the offline seat-picker (mode "demo" or
+     * "google-simulated") is discarded so it can't survive as a back door into a
+     * production deployment. */
+    var cur = KeystoneAuth.current();
+    if (cur && KeystoneAuth.googleConfigured() && cur.mode !== "google") {
+      KeystoneAuth.signOut();
+      cur = null;
+    }
+    if (cur) enterApp(); else { renderLogin(); }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();

@@ -114,11 +114,23 @@
       if (Auth._onSignedIn) Auth._onSignedIn();
     },
 
+    /* The configured OAuth client id (tenant config first, then <meta>). */
+    clientId: function () {
+      return window.KEYSTONE_GOOGLE_CLIENT_ID ||
+        ((document.querySelector('meta[name="google-client-id"]') || {}).content) || "";
+    },
+
+    /* TRUE once a real client id is configured — i.e. this is a PRODUCTION
+     * deployment where Google is the only legitimate way in. Deliberately
+     * independent of whether the GIS script loaded: if it keyed off the script,
+     * blocking accounts.google.com would silently re-enable the offline
+     * seat-picker fallback and hand out a full auth bypass. */
+    googleConfigured: function () { return !!Auth.clientId(); },
+
     /* Attempt to initialise real GIS. Returns true if a client id is present
      * and the library loaded; false → caller uses the simulated path. */
     initGoogle: function (buttonEl) {
-      var cid = window.KEYSTONE_GOOGLE_CLIENT_ID ||
-        (document.querySelector('meta[name="google-client-id"]') || {}).content;
+      var cid = Auth.clientId();
       if (!cid || !window.google || !google.accounts || !google.accounts.id) return false;
       try {
         google.accounts.id.initialize({ client_id: cid, callback: this._handleGoogleCredential, auto_select: false });
