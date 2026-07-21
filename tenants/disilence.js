@@ -18,7 +18,7 @@ window.KEYSTONE_GOOGLE_CLIENT_ID = "";  // set a real OAuth client id to enable 
 
 window.KEYSTONE_TENANT = {
   id: "disilence",
-  version: 3,
+  version: 4,
   name: "DiSilence",
   product: "DiSilence OS",
   tagline: "Composed in silence. Judged before it ships.",

@@ -9,7 +9,7 @@
   "use strict";
   var T = window.KEYSTONE_TENANT;
   if (!T) return;
-  T.version = 3;
+  T.version = 4;
   var C = T.collections;
 
   /* ---- Engagements: active client delivery, by lifecycle phase (safe). No $. */

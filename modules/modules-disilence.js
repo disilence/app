@@ -292,30 +292,61 @@
       (portal ? '<p style="margin-top:10px"><a href="' + portal.path + '" target="_blank" rel="noopener">Open client portal →</a></p>' : "") }));
   }
 
-  /* ============================ CLIENT PORTALS (portals) ================= */
+  /* ============================ CLIENT PORTALS (portals) =================
+   * Portal keys are per-client bearer SECRETS — deliberately NOT in this public
+   * bundle. An operator saves each client's key once into their OWN browser
+   * (localStorage, per-device, never the repo); "Open" then works. When the
+   * authenticated ?api= backend is wired, keys are fetched per logged-in
+   * operator instead of pasted. */
+  function opKeyOf(pt) { try { return (localStorage.getItem("ds_op_key_" + pt.id) || "").trim(); } catch (_) { return ""; } }
+  function openPortal(K, pt) {
+    var key = opKeyOf(pt);
+    if (!key) {
+      var v = window.prompt("Private portal key for " + pt.name + " — the token from the client's link (the part after #).\nStored only in THIS browser, never in the app. Paste it:", "");
+      if (v == null) return;
+      key = String(v).replace(/^#/, "").trim();
+      if (!key) return;
+      try { localStorage.setItem("ds_op_key_" + pt.id, key); } catch (_) {}
+      K.reRender();
+    }
+    window.open(pt.path + "#" + encodeURIComponent(key), "_blank", "noopener");
+  }
+  function clearKey(K, pt) {
+    try { localStorage.removeItem("ds_op_key_" + pt.id); } catch (_) {}
+    K.toast("Portal key cleared for " + pt.name, { title: "Key removed" });
+    K.reRender();
+  }
   M.portals = {
     render: function (K, p, mount) {
       var S = K.store, portals = S.list("portals");
       U.mountView(K, mount, function (on) {
+        var haveKeys = portals.filter(function (pt) { return !!opKeyOf(pt); }).length;
         var kpis = U.grid("g-kpi",
           U.kpi({ lab: "Portals live", val: portals.length, meta: "customer + partner" }) +
           U.kpi({ lab: "Customer", val: portals.filter(function (p2) { return p2.variant === "customer"; }).length, meta: "billing shown" }) +
           U.kpi({ lab: "Partner", val: portals.filter(function (p2) { return p2.variant === "partner"; }).length, meta: "milestones only" }) +
-          U.kpi({ lab: "Your move", val: portals.filter(function (p2) { return p2.whose === "you"; }).length, meta: "awaiting client" })
+          U.kpi({ lab: "Keys on this device", val: haveKeys + " / " + portals.length, meta: "saved locally" })
         );
         var rows = portals.map(function (pt) {
-          return { name: U.esc(pt.name), variant: pt.variant === "partner" ? U.chip("partner", "warn") : U.chip("customer", "mute"),
-            phase: U.esc(pt.phase), whose: whoseBadge(pt.whose), tok: '<code>' + U.esc(pt.token_masked) + "</code>",
-            open: '<a href="' + pt.path + '" target="_blank" rel="noopener">Open →</a>' };
+          var hasKey = !!opKeyOf(pt);
+          return {
+            name: U.esc(pt.name),
+            variant: pt.variant === "partner" ? U.chip("partner", "warn") : U.chip("customer", "mute"),
+            phase: U.esc(pt.phase), whose: whoseBadge(pt.whose),
+            key: hasKey
+              ? '<span class="lnk" data-click="' + on(function () { clearKey(K, pt); }) + '" title="Clear the saved key on this device">' + U.chip("🔑 key saved", "ok") + "</span>"
+              : U.chip("no key", "mute"),
+            open: '<span class="lnk" style="color:var(--brand-2);cursor:pointer" data-click="' + on(function () { openPortal(K, pt); }) + '">' + (hasKey ? "Open →" : "Add key + open →") + "</span>"
+          };
         });
         var tbl = U.tbl([
           { label: "Client / partner", k: "name" }, { label: "Variant", k: "variant" }, { label: "Phase", k: "phase" },
-          { label: "Move", k: "whose" }, { label: "Token", k: "tok" }, { label: "Portal", map: function (r) { return r.open; } }
+          { label: "Move", k: "whose" }, { label: "Key (this device)", map: function (r) { return r.key; } }, { label: "Portal", map: function (r) { return r.open; } }
         ], rows);
         return U.head("Client Portals", "The customer + partner support portal — one token-gated surface, two variants", envNote()) + kpis +
-          U.card({ title: "Provisioned portals", sub: "Tokens are private bearer keys (masked here). Customer variant shows billing; partner variant shows milestones + shared docs only.", body: tbl }) +
-          U.card({ title: "The portal surface", sub: "Deployed at app.disilence.com/portal/", body:
-            '<p class="sub">Each client or partner gets a private link (<code>/portal/#&lt;token&gt;</code>) showing exactly where their project stands, whose move it is, every document in one place, and a direct upload/message channel back to us. New portals auto-provision on the "payment cleared" workflow. <a href="/portal/" target="_blank" rel="noopener">Open the portal →</a></p>' });
+          U.card({ title: "Provisioned portals", sub: "Keys are private per-client bearer secrets — saved only in your browser, never in the app. Click Open, paste the key once, and it opens thereafter.", body: tbl }) +
+          U.card({ title: "Where a client's key lives", sub: "The token is the part after # in the private link we sent the client", body:
+            '<p class="sub">Each client/partner has a private link <code>/portal/#&lt;key&gt;</code>. The key is stored in the Make “Client Portal API” backend (and in that client’s pack in the repo) — not in this public app. To open a portal here, click <b>Open</b> and paste the key once; it stays on this device only. The client themselves just uses their bookmarked link. New portals auto-provision on the “payment cleared” workflow.</p>' });
       });
     },
     count: function (K) { return K.store.list("portals").length || null; }
