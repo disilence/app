@@ -410,7 +410,7 @@
         }).join("");
         return U.head("Insights & Forecast", "Rollups on captured activity — live figures wire via the authenticated seam", envNote()) + kpis +
           U.grid("g-2", U.card({ title: "Pipeline by division", sub: "Annualized, representative", body: bars }) +
-            U.card({ title: "Reading this board", body: '<p class="sub">This environment ships with <b>representative</b> operating data so the system is fully explorable without exposing real financials. Point the store at the authenticated backend (<code>?api=&lt;base&gt;</code>) to render live pipeline, MRR, and win-rate from Pipedrive + Stripe. Structure and phases are real; the money is illustrative until then.</p>' }));
+            U.card({ title: "Reading this board", body: '<p class="sub">This environment ships with <b>representative</b> operating data so the system is fully explorable without exposing real financials. Point the store at the authenticated backend (<code>?api=&lt;base&gt;</code>) to render live pipeline, MRR, and win-rate from our own CRM + Stripe. Structure and phases are real; the money is illustrative until then.</p>' }));
       });
     },
     count: function (K) { return null; }

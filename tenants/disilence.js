@@ -18,7 +18,7 @@ window.KEYSTONE_GOOGLE_CLIENT_ID = "";  // set a real OAuth client id to enable 
 
 window.KEYSTONE_TENANT = {
   id: "disilence",
-  version: 2,
+  version: 3,
   name: "DiSilence",
   product: "DiSilence OS",
   tagline: "Composed in silence. Judged before it ships.",
@@ -27,6 +27,12 @@ window.KEYSTONE_TENANT = {
   theme: { brand: "#f2a03d", brand2: "#f6b968", brandDeep: "#c47615" },
   logo: "brand/disilence-mark.svg",
   regions: ["Atlanta", "US"],
+
+  /* ---- Access control: only Google-verified @disilence.com accounts may sign
+   * in (enforced in auth.js on the returned ID token; the real boundary is the
+   * OAuth consent screen set to "Internal" for the disilence.com Workspace).
+   * Add a domain here to admit another org; add a person to users[] for a seat. */
+  auth: { allowedDomains: ["disilence.com"] },
 
   /* ---- User directory (Google-email identities → RBAC) -------------------
    * Only real @disilence.com seats + the Polaris system operator (an honest
@@ -84,7 +90,7 @@ window.KEYSTONE_TENANT = {
     { id: "wf_inbound_lead", name: "Inbound lead → triage + CRM", trigger: "leads.insert", mode: "auto", dept: "Growth", requires: [],
       steps: [
         { action: "task", label: "Classify + enrich lead", params: {} },
-        { action: "create", label: "Create Pipedrive opportunity", params: { entity: "opportunities" } },
+        { action: "create", label: "Create opportunity in the CRM", params: { entity: "opportunities" } },
         { action: "notify", label: "Notify Growth", params: {} },
       ] },
     { id: "wf_demo_approved", name: "Demo approved → send-gate queue", trigger: "opportunities.update", when: { field: "stage", op: "eq", value: "demo-approved" }, mode: "auto", dept: "Growth", requires: [],
@@ -112,7 +118,7 @@ window.KEYSTONE_TENANT = {
 
   apiCatalog: [
     { entity: "leads", method: "POST", path: "/v1/leads", write_mode: "auto", approval: false },
-    { entity: "opportunities", method: "POST", path: "/v1/pipedrive/deals", write_mode: "auto", approval: false },
+    { entity: "opportunities", method: "POST", path: "/v1/opportunities", write_mode: "auto", approval: false },
     { entity: "outbound", method: "POST", path: "/v1/smartlead/send", write_mode: "gated", approval: true },
     { entity: "portals", method: "POST", path: "/v1/portal/provision", write_mode: "gated", approval: true },
     { entity: "content", method: "POST", path: "/v1/postiz/publish", write_mode: "auto", approval: false },
@@ -172,7 +178,7 @@ window.KEYSTONE_TENANT = {
 
     /* ---- Integrations (real stack, connection status only — no secrets/ids). */
     integrations: [
-      { id: "INT-PD", name: "Pipedrive", kind: "crm", status: "connected", detail: "Atlanta-SMB + SYSCON pipelines", scope: "deals, leads, orgs" },
+      { id: "INT-CRM", name: "DiSilence CRM", kind: "native", status: "native", detail: "Our own clients + pipeline — system of record (no third-party CRM)", scope: "clients, opportunities, engagements" },
       { id: "INT-GM", name: "Gmail", kind: "email", status: "connected", detail: "Outbound + inbox triage", scope: "send, read" },
       { id: "INT-DRIVE", name: "Google Drive", kind: "storage", status: "connected", detail: "Client folders + deliverables", scope: "drive.file" },
       { id: "INT-MAKE", name: "Make.com", kind: "automation", status: "connected", detail: "Portal API + routing scenarios", scope: "webhooks" },

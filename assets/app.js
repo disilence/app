@@ -100,6 +100,12 @@
     // Google button: real GIS if configured, else simulated primary sign-in
     var realOk = KeystoneAuth.initGoogle($("#gbtnReal"));
     KeystoneAuth._onSignedIn = enterApp;
+    KeystoneAuth._onDenied = function (email) {
+      var doms = (KeystoneAuth.allowedDomains && KeystoneAuth.allowedDomains()) || [];
+      var need = doms.length ? "@" + doms[0] : "an authorized";
+      $("#gnote").innerHTML = "<b>" + esc(email || "That account") + "</b> isn't authorized for " + esc(T.product || "this app") +
+        ". Sign in with your <b>" + esc(need) + "</b> account.";
+    };
     if (realOk) { $("#gbtnSim").classList.add("hidden"); $("#gnote").textContent = ""; }
     else {
       $("#gbtnReal").classList.add("hidden");

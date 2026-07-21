@@ -69,14 +69,44 @@
       return this._set(sess);
     },
 
-    /* Real Google flow. Resolves the ID token → Keystone user. If the email
-     * isn't in the directory we still admit them as a guest (read-only), which
-     * is the correct SaaS onboarding behaviour (invite-to-elevate). */
+    /* Allowed sign-in domains for this tenant. Explicit via T.auth.allowedDomains;
+     * otherwise derived from the domains of the seats in T.users (so DiSilence →
+     * ["disilence.com"]). This is an INTERNAL operating system, not a public SaaS
+     * — accounts outside these domains (and not explicitly listed) are refused. */
+    allowedDomains: function () {
+      var T = window.KEYSTONE_TENANT || {};
+      if (T.auth && T.auth.allowedDomains && T.auth.allowedDomains.length) {
+        return T.auth.allowedDomains.map(function (d) { return String(d).toLowerCase(); });
+      }
+      var seen = {}, out = [];
+      ((T.users) || []).forEach(function (u) {
+        var d = String(u.email || "").split("@")[1];
+        if (d && !seen[d.toLowerCase()]) { seen[d.toLowerCase()] = 1; out.push(d.toLowerCase()); }
+      });
+      return out;
+    },
+
+    /* Real Google flow. Access gate: only a Google-verified email that is EITHER
+     * on the explicit user allowlist OR on an allowed domain may enter. Everyone
+     * else is refused (no self-serve guest onboarding on an internal OS). Real
+     * enforcement is the OAuth consent screen set to "Internal" for the Workspace;
+     * this domain check is defense-in-depth on the returned ID token. */
     _handleGoogleCredential: function (resp) {
       var claims = decodeJwt(resp && resp.credential);
-      if (!claims) return;
-      var u = Auth.resolveUser(claims.email);
+      if (!claims || !claims.email) { if (Auth._onDenied) Auth._onDenied(""); return; }
+      var known = Auth.resolveUser(claims.email);
+      var domain = String(claims.email).split("@")[1] || "";
+      var domains = Auth.allowedDomains();
+      var domainOk = domains.length === 0 || domains.indexOf(domain.toLowerCase()) !== -1;
+      var verified = claims.email_verified !== false;   // Google sets true for real accounts
+      if (!verified || !(known || domainOk)) {
+        Auth.signOut();
+        if (Auth._onDenied) Auth._onDenied(claims.email);
+        return;
+      }
+      var u = known;
       if (!u) {
+        // A verified org member not yet given a seat: read-only guest until invited.
         u = { email: claims.email, name: claims.name || claims.email, role: "guest", roleLabel: "Guest (read-only)",
               picture: claims.picture, initials: (claims.name || "?").split(" ").map(function (p) { return p[0]; }).slice(0, 2).join("") };
       } else if (claims.picture) { u = Object.assign({}, u, { picture: claims.picture }); }
